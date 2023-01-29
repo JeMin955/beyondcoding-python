@@ -1,1 +1,0 @@
-print(str("abc"[0]))
