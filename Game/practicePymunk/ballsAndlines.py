@@ -27,6 +27,9 @@ def main():
 
     balls = []
 
+    line_point1 = None
+    static_lines = []
+
     mouse_body = pm.Body(body_type = pm.Body.KINEMATIC)
     mouse_shape = pm.Circle(mouse_body, 3, (0, 0))
 
@@ -46,7 +49,7 @@ def main():
                 body = pm.Body(10, 100)
                 body.position = p
 
-                shape = pm.Circle(body, 10, p)
+                shape = pm.Circle(body, 10, (0,0))
                 shape.friction = 0.5
 
                 shape.collition_type = COLLTYPE_BALL
@@ -61,12 +64,26 @@ def main():
             body = pm.Body(10, 100)
             body.position = mouse_pos
 
-            shape = pm.Circle(body, 10, mouse_pos)
+            shape = pm.Circle(body, 10, (0, 0))
             shape.friction = 0.5
 
             shape.collition_type = COLLTYPE_BALL
             space.add(body, shape)
             balls.append(shape)
+
+        elif event.type == pg.MOUSEBUTTONDOWN and event.button == 3:
+            if line_point1 is None:
+                line_point1 = Vec2d(event.pos[X], flipy(event.pos[Y]))
+        elif event.type == pg.MOUSEBUTTONUP and event.button == 3:
+            if line_point1 is not None:
+                line_point2 = Vec2d(event.pos[X], flipy(event.pos[Y]))
+                shape = pm.Segment(
+                    space.static_body, line_point1, line_point2, 0
+                )
+                shape.friction = 0.99
+                space.add(shape)
+                static_lines.append(shape)
+                line_point1 = None
             
         dt = 1 / 60
         space.step(dt)
@@ -84,6 +101,17 @@ def main():
 
             pg.draw.circle(screen, pg.Color("blue"), p, int(r), 2)
             pg.draw.line(screen, pg.Color("red"), p, p2)
+
+        if line_point1 is not None:
+            p1 = int(line_point1.x), int(flipy(line_point1.y))
+            p2 = mouse_pos.x, flipy(mouse_pos.y)
+            pg.draw.lines(screen, pg.Color("black"), False, [p1, p2])
+
+        for line in static_lines:
+            p1 = (line.a[0], flipy(line.a[1]))
+            p2 = (line.b[0], flipy(line.b[1]))
+
+            pg.draw.lines(screen, pg.Color("black"), False, [p1, p2])
 
         pg.display.flip()
         clock.tick(60)
