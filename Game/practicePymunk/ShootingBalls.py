@@ -61,7 +61,7 @@ class Main(pyglet.window.Window):
             shape.color = (255, 255, 255, 125)
             self.space.add(body, shape)
             f = 1000000
-            body.apply_impulse_at_local_point((f /5, f / -15), (0, 0))
+            body.apply_impulse_at_local_point((f, 0), (0, 0))
         elif symbol == key.ESCAPE:
             pyglet.app.exit()
 
