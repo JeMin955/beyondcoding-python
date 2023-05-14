@@ -1,6 +1,9 @@
+from re import X
+
+
 def customIter():
-    for i in range(5):
-        yield i
+    x = range(5)
+    yield from x
 
 x = customIter()
 # print(x.__next__())
@@ -8,6 +11,5 @@ x = customIter()
 # print(x.__next__())
 # print(x.__next__())
 # print(x.__next__())
-
 for i in x:
     print(i)
